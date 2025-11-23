@@ -1,0 +1,4 @@
+"node_modules/" 
+".DS_Store" 
+".env" 
+"web_client/js/config.js"  # ?n file config ch?a key
