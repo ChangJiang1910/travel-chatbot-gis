@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Du Lịch GIS</title>
+    
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        /* Chỉnh lại popup cho đẹp một chút */
+        .mapboxgl-popup-content {
+            padding: 15px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .mapboxgl-popup-content h3 {
+            margin: 0 0 5px;
+            color: #0078ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id='map'></div>
+
+    <script type="module">
+        // Import các hàm từ 2 file JS bạn vừa sửa lúc nãy
+        import { initMap, addMarkersToMap } from './js/map_manager.js';
+        import { fetchTouristSpots } from './js/api_service.js';
+
+        // Hàm chạy chính
+        async function startApp() {
+            try {
+                // Bước 1: Vẽ cái bản đồ nền
+                console.log("🗺️ Đang khởi tạo bản đồ...");
+                initMap();
+
+                // Bước 2: Đi lấy dữ liệu từ Supabase
+                console.log("⏳ Đang tải dữ liệu từ Supabase...");
+                const places = await fetchTouristSpots();
+                
+                if (places && places.length > 0) {
+                    console.log(`✅ Đã tìm thấy ${places.length} địa điểm!`);
+                    
+                    // Bước 3: Vẽ các địa điểm lên bản đồ
+                    addMarkersToMap(places);
+                } else {
+                    console.warn("⚠️ Không tìm thấy địa điểm nào trong Database.");
+                }
+
+            } catch (error) {
+                console.error("❌ Có lỗi xảy ra:", error);
+                alert("Lỗi hệ thống: Xem Console (F12) để biết chi tiết.");
+            }
+        }
+
+        // Bắt đầu chạy!
+        startApp();
+    </script>
+
+</body>
+</html>
